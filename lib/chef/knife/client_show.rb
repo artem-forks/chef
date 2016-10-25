@@ -42,6 +42,7 @@ class Chef
 
         client = Chef::ApiClientV1.load(@client_name)
         output(format_for_display(client))
+        self.clear_attrs_to_show
       end
 
     end

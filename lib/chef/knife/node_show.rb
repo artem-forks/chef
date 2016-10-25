@@ -55,11 +55,7 @@ class Chef
 
         node = Chef::Node.load(@node_name)
         output(format_for_display(node))
-        self.class.attrs_to_show = []
-      end
-
-      def self.attrs_to_show=(attrs)
-        @attrs_to_show = attrs
+        self.clear_attrs_to_show
       end
     end
   end

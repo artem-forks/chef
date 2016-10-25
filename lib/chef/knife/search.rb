@@ -131,6 +131,7 @@ class Chef
             end
           end
         end
+        self.clear_attrs_to_show
       end
 
       def read_cli_args

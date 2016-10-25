@@ -29,11 +29,26 @@ class Chef
         def self.included(includer)
           includer.class_eval do
             @attrs_to_show = []
+
             option :attribute,
               :short => "-a ATTR1 [-a ATTR2]",
               :long => "--attribute ATTR1 [--attribute ATTR2] ",
               :proc => lambda { |val| @attrs_to_show << val },
               :description => "Show one or more attributes"
+
+            # Since attrs_to_show is a class variable, its value is preserved
+            # between instances of the including class. Classes that include
+            # MultiAttributeReturnOption should put `self.clear_attrs_to_show`
+            # at the end of their `run` methods so that back-to-back calls outside
+            # of the `knife` CLI (i.e. in our tests or when we're coding directly
+            # against the includer class) don't carry over the value.
+            def clear_attrs_to_show
+              self.class.attrs_to_show = []
+            end
+
+            def self.attrs_to_show=(attrs)
+              @attrs_to_show = attrs
+            end
           end
         end
       end
