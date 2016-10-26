@@ -173,12 +173,12 @@ class Chef
               shabang_or_fallback(extract_interpreter(yum_executable))
             else
               Chef::Log.warn("Yum executable not found or doesn't start with #!. Using default python.")
-              "/usr/bin/python"
+              default_python
             end
           rescue StandardError => e
             Chef::Log.warn("An error occurred attempting to determine correct python executable. Using default.")
             Chef::Log.debug(e)
-            "/usr/bin/python"
+            default_python
           end
 
           def extract_interpreter(file)
@@ -189,10 +189,18 @@ class Chef
           def shabang_or_fallback(interpreter)
             if interpreter == "/bin/bash"
               Chef::Log.warn("Yum executable interpreter is /bin/bash. Falling back to default python.")
-              "/usr/bin/python"
+              default_python
             else
               interpreter
             end
+          end
+
+          def default_python
+            %w(python python2 python3).each do |python|
+              interpreter = "/usr/bin/#{python}"
+              return interpreter if ::File.exist?(interpreter)
+            end
+            raise Chef::Exceptions::FileNotFound, 'Can not find python interpreter'
           end
 
           def shabang?(file)
